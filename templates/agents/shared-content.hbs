@@ -1,0 +1,45 @@
+## What this project is
+
+`{{projectName}}` is a Strapi {{strapiVersion}} project, {{#if isExisting}}Dockerized with{{else}}scaffolded and Dockerized by{{/if}} [create-dockphine-strapi](https://github.com/dockphine/dockphine). It runs as a set of Docker containers rather than a bare Node process — treat Docker as the primary way to run, build, and reason about this project.
+
+## Stack
+
+- Strapi {{strapiVersion}} (headless CMS)
+- Database: {{dbEngine}}{{#unless (eq dbEngine "sqlite")}} (running in its own `db` container){{/unless}}
+- Runs on port {{port}} inside the `strapi` container
+
+## Docker layout
+
+- `Dockerfile` — multi-stage build. The `build` stage installs dependencies and runs `strapi build`; the `production` stage is the slim runtime image that actually ships.
+- `docker-compose.yml` — defines the `strapi` service{{#unless (eq dbEngine "sqlite")}} and the `db` service ({{dbEngine}}){{/unless}}. This is the source of truth for how the app runs locally.
+- `.dockerignore` — keeps `node_modules`, `.git`, and secrets out of the build context.
+
+## Secrets — read this before touching env files
+
+- `.env` holds the REAL secrets (APP_KEYS, JWT_SECRET, ADMIN_JWT_SECRET, API_TOKEN_SALT, TRANSFER_TOKEN_SALT, ENCRYPTION_KEY, database credentials). It is gitignored. Do not commit it, do not print its contents, and do not regenerate these values casually — rotating them invalidates existing Strapi admin sessions and API tokens.
+- `.env.example` is committed and holds fake, correctly-shaped placeholder values plus a warning comment. It is documentation, not configuration — never copy real secrets into it.
+
+## Running it locally
+
+```
+docker compose up --build
+```
+
+Strapi admin panel: http://localhost:{{port}}/admin
+
+## Deploy target: {{deployTargetLabel}}
+
+This project was configured for {{deployTargetLabel}}. The generated deploy config is config-only — nothing has been provisioned or deployed automatically. To actually deploy:
+
+{{#each nextSteps}}
+- `{{this}}`
+{{/each}}
+
+## Where things live (Strapi orientation)
+
+- `src/api/**` — content-types, controllers, routes, services (one folder per content-type)
+- `src/admin/**` — admin panel customizations
+- `config/**` — server, database, admin, middleware, plugin config (reads from env vars via `env()`)
+- `database/migrations/**` — DB migrations
+
+When adding a new content-type, controller, or route, follow the existing structure under `src/api/` rather than inventing a new layout.

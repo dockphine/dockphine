@@ -1,0 +1,29 @@
+# {{providerLabel}} — VPS deploy overlay.
+# Use together with the base compose file:
+#   docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d --build
+services:
+  strapi:
+    # No host port publish here — Caddy is the only public entrypoint.
+    ports: []
+    expose:
+      - "{{port}}"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: {{projectName}}-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - strapi
+    networks:
+      - strapi_network
+
+volumes:
+  caddy_data:
+  caddy_config:

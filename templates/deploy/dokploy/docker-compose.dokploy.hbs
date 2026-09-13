@@ -1,0 +1,17 @@
+# Dokploy deploy overlay — import this project in your Dokploy dashboard as a
+# "Docker Compose" application pointing at this file (or merge it with docker-compose.yml).
+services:
+  strapi:
+    labels:
+      - "dokploy.enable=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{projectName}}.rule=Host(`{{projectName}}.your-dokploy-domain.com`)"
+      - "traefik.http.routers.{{projectName}}.entrypoints=websecure"
+      - "traefik.http.routers.{{projectName}}.tls.certResolver=letsencrypt"
+      - "traefik.http.services.{{projectName}}.loadbalancer.server.port={{port}}"
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true

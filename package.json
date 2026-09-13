@@ -1,0 +1,74 @@
+{
+  "name": "create-dockphine-strapi",
+  "version": "1.0.0",
+  "description": "Scaffold a production-ready, Dockerized Strapi project (or Dockerize an existing one) in under 2 minutes. Auto-generated secrets, deploy config for VPS/Fly.io/Railway/Render/Dokploy, and AI-agent-aware.",
+  "type": "module",
+  "license": "MIT",
+  "author": "dockphine",
+  "keywords": [
+    "strapi",
+    "strapi docker",
+    "dockerize strapi",
+    "docker-compose strapi",
+    "strapi cli",
+    "strapi deployment",
+    "strapi production",
+    "strapi vps",
+    "strapi fly.io",
+    "strapi railway",
+    "strapi render",
+    "strapi dokploy",
+    "headless cms",
+    "self-hosted cms",
+    "create-strapi-app",
+    "docker",
+    "docker-compose",
+    "cli",
+    "scaffold",
+    "scaffolding-tool",
+    "open-source",
+    "ai-agent",
+    "claude-code",
+    "cursor"
+  ],
+  "homepage": "https://github.com/dockphine/dockphine#readme",
+  "bugs": {
+    "url": "https://github.com/dockphine/dockphine/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dockphine/dockphine.git"
+  },
+  "bin": {
+    "create-dockphine-strapi": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "build": "tsup && node scripts/copy-templates.mjs && chmod +x dist/index.js",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "cli-progress": "^3.12.0",
+    "commander": "^11.1.0",
+    "execa": "^8.0.1",
+    "fs-extra": "^11.2.0",
+    "handlebars": "^4.7.8",
+    "inquirer": "^9.2.12"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.5",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^24.0.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.4.0"
+  }
+}

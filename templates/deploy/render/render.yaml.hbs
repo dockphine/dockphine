@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: {{projectName}}
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    envVars:
+      - key: PORT
+        value: "{{port}}"
+      - key: DATABASE_CLIENT
+        value: {{dbEngine}}
+      # APP_KEYS, JWT_SECRET, ADMIN_JWT_SECRET, API_TOKEN_SALT, TRANSFER_TOKEN_SALT,
+      # ENCRYPTION_KEY, and DATABASE_* credentials: add these as secret env vars in the
+      # Render dashboard (or `render env:set`) — do not commit real values here.
+{{#unless (eq dbEngine "sqlite")}}
+{{#if (eq dbEngine "postgres")}}
+databases:
+  - name: {{projectName}}-db
+    plan: starter
+{{/if}}
+{{/unless}}

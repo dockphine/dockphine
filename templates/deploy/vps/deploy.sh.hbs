@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Deploy {{projectName}} to a {{providerLabel}} server over SSH.
+#
+# Usage:
+#   ./deploy.sh user@your-server-ip
+#
+# Prerequisites on the server: Docker + the Docker Compose plugin installed.
+set -euo pipefail
+
+if [ -z "${1:-}" ]; then
+  echo "Usage: $0 user@server-ip" >&2
+  exit 1
+fi
+
+TARGET="$1"
+REMOTE_DIR="~/{{projectName}}"
+
+echo "Syncing project files to $TARGET:$REMOTE_DIR ..."
+rsync -az --delete \
+  --exclude 'node_modules' \
+  --exclude '.git' \
+  --exclude '.tmp' \
+  ./ "$TARGET:$REMOTE_DIR/"
+
+echo "Building and starting containers on the server..."
+ssh "$TARGET" "cd $REMOTE_DIR && docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d --build"
+
+echo "Done. Check status with:"
+echo "  ssh $TARGET 'cd $REMOTE_DIR && docker compose ps'"

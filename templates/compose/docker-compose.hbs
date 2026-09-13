@@ -1,0 +1,76 @@
+services:
+  strapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: {{projectName}}:latest
+    container_name: {{projectName}}-strapi
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "{{port}}:{{port}}"
+{{#if (eq dbEngine "sqlite")}}
+    volumes:
+      - strapi_uploads:/app/public/uploads
+      - strapi_data:/app/.tmp
+{{else}}
+    volumes:
+      - strapi_uploads:/app/public/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+{{/if}}
+    networks:
+      - strapi_network
+
+{{#unless (eq dbEngine "sqlite")}}
+  db:
+{{#if (eq dbEngine "postgres")}}
+    image: postgres:16-alpine
+    container_name: {{projectName}}-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: {{dbName}}
+      POSTGRES_USER: {{dbUser}}
+      POSTGRES_PASSWORD: {{dbPassword}}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{dbUser}} -d {{dbName}}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+{{/if}}
+{{#if (eq dbEngine "mysql")}}
+    image: mysql:8
+    container_name: {{projectName}}-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: {{dbName}}
+      MYSQL_USER: {{dbUser}}
+      MYSQL_PASSWORD: {{dbPassword}}
+      MYSQL_ROOT_PASSWORD: {{dbRootPassword}}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+{{/if}}
+    networks:
+      - strapi_network
+{{/unless}}
+
+networks:
+  strapi_network:
+    driver: bridge
+
+volumes:
+  strapi_uploads:
+{{#if (eq dbEngine "sqlite")}}
+  strapi_data:
+{{else}}
+  db_data:
+{{/if}}

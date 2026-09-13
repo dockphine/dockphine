@@ -1,0 +1,30 @@
+app = "{{projectName}}"
+primary_region = "iad"
+
+[build]
+
+[env]
+  PORT = "{{port}}"
+  DATABASE_CLIENT = "{{dbEngine}}"
+
+[http_service]
+  internal_port = {{port}}
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+# Secrets (APP_KEYS, JWT_SECRET, DATABASE_* credentials, etc.) are NOT stored here.
+# Set them with:
+#   fly secrets import < .env
+{{#unless (eq dbEngine "sqlite")}}
+#
+# This app needs a {{dbEngine}} database reachable from Fly. Provision one (e.g. `fly postgres create`
+# for Postgres, or a managed/external instance for MySQL) and set DATABASE_HOST/PORT/NAME/
+# USERNAME/PASSWORD as fly secrets to point at it.
+{{/unless}}

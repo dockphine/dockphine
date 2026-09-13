@@ -1,0 +1,10 @@
+{{#if domain}}
+{{domain}} {
+	reverse_proxy strapi:{{port}}
+}
+{{else}}
+# Replace with your real domain once you have one pointed at this server's IP.
+:80 {
+	reverse_proxy strapi:{{port}}
+}
+{{/if}}
