@@ -115,21 +115,9 @@ with the Compose plugin to run what it generates.
 
 ## How it works
 
-```mermaid
-flowchart TD
-    A["npx create-dockphine-strapi"] --> B{New or existing project?}
-    B -- New --> C["Scaffold Strapi v4/v5<br/>(host-side, via create-strapi-app)"]
-    B -- Existing --> D["Detect @strapi/strapi<br/>in package.json"]
-    C --> E
-    D --> E["Choose database<br/>Postgres / MySQL / SQLite"]
-    E --> F["Choose deploy target<br/>VPS / Fly.io / Railway / Render / Dokploy"]
-    F --> G["Generate Dockerfile,<br/>docker-compose.yml, deploy config"]
-    G --> H["Generate .env with real secrets<br/>+ .env.example with placeholders"]
-    H --> I{Build now?}
-    I -- Yes --> J["docker compose up --build"]
-    I -- No --> K["Print next-step commands"]
-    J --> L["🐬 Strapi live at<br/>localhost:1337/admin"]
-```
+<div align="center">
+  <img src="docs/architecture.svg" alt="Dockphine flow: npx create-dockphine-strapi, choose new or existing project, choose database, choose deploy target, generate Docker and env files, then build now or print next steps" width="640" />
+</div>
 
 <br />
 

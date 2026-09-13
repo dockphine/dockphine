@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 975" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4c8db5"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="820" height="975" fill="#0d1117"/>
+
+  <!-- edges -->
+  <g stroke="#4c8db5" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
+    <path d="M410,57 L410,73"/>
+    <path d="M410,225 L212,268"/>
+    <path d="M410,225 L610,268"/>
+    <path d="M212,320 L390,358"/>
+    <path d="M610,320 L430,358"/>
+    <path d="M410,410 L410,428"/>
+    <path d="M410,495 L410,513"/>
+    <path d="M410,575 L410,593"/>
+    <path d="M410,655 L410,658"/>
+    <path d="M410,800 L212,823"/>
+    <path d="M410,800 L610,823"/>
+    <path d="M212,875 L212,903"/>
+  </g>
+
+  <!-- edge labels -->
+  <g font-size="12" fill="#8fb3c9" text-anchor="middle">
+    <text x="272" y="248">New</text>
+    <text x="548" y="248">Existing</text>
+    <text x="292" y="813">Yes</text>
+    <text x="528" y="813">No</text>
+  </g>
+
+  <!-- box style helper values: fill #161b22, stroke #3d6a85 -->
+
+  <!-- 1: start -->
+  <rect x="295" y="15" width="230" height="42" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="410" y="41" font-size="13" fill="#e6edf3" text-anchor="middle">npx create-dockphine-strapi</text>
+
+  <!-- 2: diamond -->
+  <polygon points="410,75 550,150 410,225 270,150" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="410" y="154" font-size="12.5" fill="#e6edf3" text-anchor="middle">New or existing project?</text>
+
+  <!-- 3: scaffold new -->
+  <rect x="90" y="270" width="240" height="50" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="210" y="291" font-size="12.5" fill="#e6edf3" text-anchor="middle">Scaffold Strapi v4/v5</text>
+  <text x="210" y="308" font-size="12.5" fill="#e6edf3" text-anchor="middle">(host-side, via create-strapi-app)</text>
+
+  <!-- 4: detect existing -->
+  <rect x="490" y="270" width="240" height="50" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="610" y="291" font-size="12.5" fill="#e6edf3" text-anchor="middle">Detect @strapi/strapi</text>
+  <text x="610" y="308" font-size="12.5" fill="#e6edf3" text-anchor="middle">in package.json</text>
+
+  <!-- 5: choose database -->
+  <rect x="290" y="360" width="240" height="50" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="410" y="381" font-size="12.5" fill="#e6edf3" text-anchor="middle">Choose database</text>
+  <text x="410" y="398" font-size="12.5" fill="#e6edf3" text-anchor="middle">Postgres / MySQL / SQLite</text>
+
+  <!-- 6: choose deploy target -->
+  <rect x="270" y="430" width="280" height="65" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="410" y="452" font-size="12.5" fill="#e6edf3" text-anchor="middle">Choose deploy target</text>
+  <text x="410" y="469" font-size="12.5" fill="#e6edf3" text-anchor="middle">VPS / Fly.io / Railway / Render /</text>
+  <text x="410" y="486" font-size="12.5" fill="#e6edf3" text-anchor="middle">Dokploy</text>
+
+  <!-- 7: generate docker files -->
+  <rect x="260" y="515" width="300" height="60" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="410" y="538" font-size="12.5" fill="#e6edf3" text-anchor="middle">Generate Dockerfile,</text>
+  <text x="410" y="555" font-size="12.5" fill="#e6edf3" text-anchor="middle">docker-compose.yml, deploy config</text>
+
+  <!-- 8: generate env -->
+  <rect x="250" y="595" width="320" height="60" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="410" y="618" font-size="12.5" fill="#e6edf3" text-anchor="middle">Generate .env with real secrets</text>
+  <text x="410" y="635" font-size="12.5" fill="#e6edf3" text-anchor="middle">+ .env.example with placeholders</text>
+
+  <!-- 9: diamond build now -->
+  <polygon points="410,660 520,730 410,800 300,730" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="410" y="734" font-size="12.5" fill="#e6edf3" text-anchor="middle">Build now?</text>
+
+  <!-- 10: docker compose up -->
+  <rect x="90" y="825" width="240" height="50" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="210" y="855" font-size="12.5" fill="#e6edf3" text-anchor="middle">docker compose up --build</text>
+
+  <!-- 11: print next steps -->
+  <rect x="490" y="825" width="240" height="50" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="610" y="855" font-size="12.5" fill="#e6edf3" text-anchor="middle">Print next-step commands</text>
+
+  <!-- 12: strapi live -->
+  <rect x="90" y="905" width="240" height="55" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
+  <text x="210" y="927" font-size="12.5" fill="#e6edf3" text-anchor="middle">🐬 Strapi live at</text>
+  <text x="210" y="944" font-size="12.5" fill="#e6edf3" text-anchor="middle">localhost:1337/admin</text>
+</svg>
