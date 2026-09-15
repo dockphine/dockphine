@@ -13,7 +13,8 @@ export type DeployTarget =
   | "fly"
   | "railway"
   | "render"
-  | "dokploy";
+  | "dokploy"
+  | "none";
 
 export const VPS_FAMILY_TARGETS: readonly DeployTarget[] = [
   "digitalocean",

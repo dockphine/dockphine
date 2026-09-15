@@ -9,6 +9,7 @@ import { flyAdapter } from "./fly.js";
 import { railwayAdapter } from "./railway.js";
 import { renderAdapter } from "./render.js";
 import { dokployAdapter } from "./dokploy.js";
+import { noneAdapter } from "./none.js";
 import type { DeployAdapter, DeployTarget } from "../types.js";
 
 export const deployAdapters: Record<DeployTarget, DeployAdapter> = {
@@ -21,4 +22,5 @@ export const deployAdapters: Record<DeployTarget, DeployAdapter> = {
   railway: railwayAdapter,
   render: renderAdapter,
   dokploy: dokployAdapter,
+  none: noneAdapter,
 };

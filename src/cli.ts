@@ -1,25 +1,27 @@
 import path from "node:path";
 import fs from "fs-extra";
+import React from "react";
+import { render } from "ink";
 import { Command } from "commander";
 import { execa } from "execa";
-import ora from "ora";
-import { promptProjectConfig } from "./prompts/index.js";
+import { Wizard, type WizardResult } from "./ui/Wizard.js";
+import { GenerationChecklist, type ChecklistTask } from "./ui/GenerationChecklist.js";
+import { OverwriteConfirm } from "./ui/OverwriteConfirm.js";
+import { Summary } from "./ui/Summary.js";
+import { CancelledError } from "./ui/useCancel.js";
 import { scaffoldNewProject } from "./core/scaffold-new.js";
 import { generateDockerFiles } from "./core/docker-generator.js";
 import { deployAdapters } from "./core/deploy-adapters/index.js";
 import { generateAiAgentFiles } from "./core/ai-agent-generator.js";
 import { writeEnvFiles } from "./core/env-writer.js";
-import { writeGeneratedFiles, WriteAbortedError } from "./core/file-writer.js";
+import { findExistingFiles, writeFiles, WriteAbortedError } from "./core/file-writer.js";
+import { generateDbCredentials, generateSecrets } from "./core/secrets.js";
+import { checkDocker } from "./core/docker-check.js";
 import { NotAStrapiProjectError } from "./core/detect-existing.js";
-import { logger } from "./utils/logger.js";
+import { friendlyErrorMessage } from "./utils/error-message.js";
+import type { ProjectConfig } from "./core/types.js";
 
-const CLI_VERSION = "1.0.0";
-
-function isCancelError(err: unknown): boolean {
-  return Boolean(
-    err && typeof err === "object" && "name" in err && (err as { name?: string }).name === "ExitPromptError"
-  );
-}
+const CLI_VERSION = "1.2.0";
 
 export async function run(): Promise<void> {
   const program = new Command();
@@ -31,85 +33,155 @@ export async function run(): Promise<void> {
 
   const cwd = process.cwd();
 
-  logger.title("dockphine");
-  logger.info("Dockerize Strapi in under 2 minutes.\n");
+  if (!process.stdin.isTTY) {
+    console.error(
+      "dockphine needs an interactive terminal (TTY) to run — its prompts can't work piped, " +
+        "redirected, or in most CI environments. Run it directly in a terminal."
+    );
+    process.exitCode = 1;
+    return;
+  }
 
   try {
-    const cfg = await promptProjectConfig(cwd);
+    // Screen 1: wizard — mounts, resolves with the answers, unmounts.
+    const wizardInstance = render(React.createElement(Wizard, { cwd }), { exitOnCtrlC: false });
+    const wizardResult = (await wizardInstance.waitUntilExit()) as WizardResult;
 
-    if (cfg.mode === "new") {
-      await scaffoldNewProject(cfg, cwd);
+    const cfg: ProjectConfig = {
+      ...wizardResult,
+      dbCredentials: generateDbCredentials(wizardResult.projectName),
+      secrets: generateSecrets(),
+      exampleSecrets: generateSecrets(),
+    };
+
+    let effectiveBuildMode = cfg.buildMode;
+    let dockerWarning: string | undefined;
+    if (cfg.buildMode === "build-now") {
+      const dockerStatus = await checkDocker();
+      if (!dockerStatus.available) {
+        dockerWarning = dockerStatus.message;
+        effectiveBuildMode = "scaffold-only";
+      }
     }
 
     await fs.ensureDir(cfg.projectDir);
 
+    // Plain (non-visual) generation — fast, in-memory template rendering, doesn't need its own
+    // spinner row, and its output is needed up front to run the overwrite check below.
     const [dockerFiles, deployFiles, aiFiles] = await Promise.all([
       generateDockerFiles(cfg),
       deployAdapters[cfg.deployTarget].generate(cfg),
       generateAiAgentFiles(cfg),
     ]);
+    const allGeneratedFiles = [...dockerFiles, ...deployFiles, ...aiFiles];
 
-    const written = await writeGeneratedFiles(cfg.projectDir, [
-      ...dockerFiles,
-      ...deployFiles,
-      ...aiFiles,
-    ]);
-
-    await writeEnvFiles(cfg);
-    written.push(".env");
-    if (await fs.pathExists(path.join(cfg.projectDir, ".env.example"))) {
-      written.push(".env.example");
+    // Screen 2 (conditional): overwrite confirmation — must fully unmount before the checklist
+    // screen mounts; Ink doesn't support two live render() instances on the same stdout at once.
+    const existing = await findExistingFiles(cfg.projectDir, allGeneratedFiles);
+    if (existing.length > 0) {
+      const confirmInstance = render(React.createElement(OverwriteConfirm, { files: existing }), {
+        exitOnCtrlC: false,
+      });
+      const proceed = await confirmInstance.waitUntilExit();
+      if (!proceed) throw new WriteAbortedError();
     }
 
-    logger.divider();
-    logger.success(`Generated ${written.length} files in ${cfg.projectDir}`);
-    for (const f of written.sort()) logger.info(`  ${f}`);
+    // Screen 3: generation checklist
+    let writtenFiles: string[] = [];
+    let buildAttempted = false;
+    let buildSucceeded = false;
+    let buildErrorMessage: string | undefined;
 
+    const tasks: ChecklistTask[] = [];
+
+    if (cfg.mode === "new") {
+      tasks.push({
+        id: "scaffold",
+        label: `Scaffolding Strapi ${cfg.strapiVersion}`,
+        run: () => scaffoldNewProject(cfg, cwd),
+      });
+    }
+
+    tasks.push({
+      id: "write",
+      label: "Writing Docker, deploy, and AI-agent files",
+      run: async () => {
+        writtenFiles = await writeFiles(cfg.projectDir, allGeneratedFiles);
+      },
+    });
+
+    tasks.push({
+      id: "env",
+      label: "Writing environment files",
+      run: async () => {
+        await writeEnvFiles(cfg);
+        writtenFiles = [...writtenFiles, ".env"];
+        if (await fs.pathExists(path.join(cfg.projectDir, ".env.example"))) {
+          writtenFiles = [...writtenFiles, ".env.example"];
+        }
+      },
+    });
+
+    if (effectiveBuildMode === "build-now") {
+      tasks.push({
+        id: "build",
+        label: "Building and starting containers",
+        run: async () => {
+          buildAttempted = true;
+          try {
+            await execa("docker", ["compose", "up", "--build", "-d"], { cwd: cfg.projectDir });
+            buildSucceeded = true;
+          } catch (err) {
+            // Intentionally not rethrown: a failed local build shouldn't abort the whole run —
+            // the Summary screen reports it clearly and offers the manual retry command.
+            buildErrorMessage = friendlyErrorMessage(err);
+          }
+        },
+      });
+    }
+
+    const checklistInstance = render(React.createElement(GenerationChecklist, { tasks }), {
+      exitOnCtrlC: false,
+    });
+    await checklistInstance.waitUntilExit();
+
+    // Screen 4: summary
     const adapter = deployAdapters[cfg.deployTarget];
     const relDir = path.relative(cwd, cfg.projectDir) || ".";
 
-    if (cfg.buildMode === "build-now") {
-      const spinner = ora("Running docker compose up --build...").start();
-      try {
-        await execa("docker", ["compose", "up", "--build", "-d"], { cwd: cfg.projectDir });
-        spinner.succeed("Containers built and started.");
-        logger.success(`Strapi admin: http://localhost:${cfg.port}/admin`);
-        logger.info(`Follow logs with: cd ${relDir} && docker compose logs -f`);
-      } catch (err) {
-        spinner.fail("docker compose up --build failed.");
-        logger.error(err instanceof Error ? err.message : String(err));
-        logger.info(`You can retry manually: cd ${relDir} && docker compose up --build`);
-      }
-    } else {
-      logger.divider();
-      logger.step("Next steps:");
-      logger.command(`cd ${relDir}`);
-      logger.command("docker compose up --build");
-    }
-
-    logger.divider();
-    logger.step(`Deploying to ${adapter.label}:`);
-    for (const step of adapter.nextSteps(cfg)) logger.command(step);
-
-    logger.divider();
-    logger.success("Done.");
+    const summaryInstance = render(
+      React.createElement(Summary, {
+        writtenFiles,
+        projectDir: cfg.projectDir,
+        relDir,
+        port: cfg.port,
+        buildAttempted,
+        buildSucceeded,
+        buildErrorMessage,
+        dockerWarning,
+        deployLabel: adapter.label,
+        deploySteps: adapter.nextSteps(cfg),
+      }),
+      { exitOnCtrlC: false }
+    );
+    await summaryInstance.waitUntilExit();
   } catch (err) {
+    if (err instanceof CancelledError) {
+      console.log("Cancelled.");
+      process.exitCode = 130;
+      return;
+    }
     if (err instanceof WriteAbortedError) {
-      logger.warn(err.message);
+      console.log(err.message);
       process.exitCode = 1;
       return;
     }
     if (err instanceof NotAStrapiProjectError) {
-      logger.error(err.message);
+      console.error(err.message);
       process.exitCode = 1;
       return;
     }
-    if (isCancelError(err)) {
-      logger.warn("Cancelled.");
-      process.exitCode = 130;
-      return;
-    }
-    logger.error(err instanceof Error ? err.message : String(err));
+    console.error(friendlyErrorMessage(err));
     process.exitCode = 1;
   }
 }

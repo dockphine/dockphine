@@ -1,7 +1,8 @@
 import { execa } from "execa";
-import ora from "ora";
 import fs from "fs-extra";
 import type { ProjectConfig, StrapiVersion } from "./types.js";
+import { checkDocker } from "./docker-check.js";
+import { friendlyErrorMessage } from "../utils/error-message.js";
 
 const VERSION_RANGE: Record<StrapiVersion, { min: number; max: number }> = {
   v4: { min: 18, max: 22 },
@@ -66,11 +67,17 @@ export async function scaffoldNewProject(cfg: ProjectConfig, cwd: string): Promi
   const args = scaffoldArgs(cfg);
   const useContainer = !hostSatisfies(cfg.strapiVersion);
 
-  const spinner = ora(
-    useContainer
-      ? `Scaffolding Strapi ${cfg.strapiVersion} inside a temporary Docker container (your local Node.js doesn't satisfy Strapi ${cfg.strapiVersion}'s requirement)...`
-      : `Scaffolding Strapi ${cfg.strapiVersion}...`
-  ).start();
+  if (useContainer) {
+    const dockerStatus = await checkDocker();
+    if (!dockerStatus.available) {
+      const { min, max } = VERSION_RANGE[cfg.strapiVersion];
+      throw new Error(
+        `Strapi ${cfg.strapiVersion} needs Node.js ${min}-${max}, which your local Node.js ` +
+          `(${process.versions.node}) doesn't satisfy, so scaffolding needs to run inside a ` +
+          `Docker container instead. ${dockerStatus.message}`
+      );
+    }
+  }
 
   try {
     if (useContainer) {
@@ -91,9 +98,7 @@ export async function scaffoldNewProject(cfg: ProjectConfig, cwd: string): Promi
     } else {
       await execa("npx", args, { cwd });
     }
-    spinner.succeed(`Strapi ${cfg.strapiVersion} scaffolded.`);
   } catch (err) {
-    spinner.fail(`Failed to scaffold Strapi ${cfg.strapiVersion}.`);
-    throw err;
+    throw new Error(friendlyErrorMessage(err));
   }
 }

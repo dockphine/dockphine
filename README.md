@@ -10,7 +10,7 @@ One command. Real secrets generated for you. Deploy-ready config for the platfor
 <br />
 Open source, MIT-licensed, built for developers who ship.
 
-[![version](https://img.shields.io/badge/version-1.0.0-00d3ab.svg)](https://github.com/dockphine/dockphine/releases)
+[![version](https://img.shields.io/badge/version-1.2.0-00d3ab.svg)](https://github.com/dockphine/dockphine/releases)
 [![npm version](https://img.shields.io/npm/v/dockphine.svg?color=00d3ab&label=npm)](https://www.npmjs.com/package/dockphine)
 [![npm downloads](https://img.shields.io/npm/dm/dockphine.svg?color=00d3ab)](https://www.npmjs.com/package/dockphine)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -29,9 +29,9 @@ npx dockphine
 <br />
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/dockphine/dockphine/main/docs/demo.gif" alt="dockphine terminal demo — scaffolding, Dockerizing, and booting a Strapi project in under 2 minutes" width="820" />
+  <img src="https://raw.githubusercontent.com/dockphine/dockphine/main/docs/demo.gif" alt="dockphine terminal demo — the interactive wizard scaffolding a new Strapi v5 + PostgreSQL project and generating all Docker, deploy, and AI-agent files" width="820" />
   <br />
-  <sub>Full run: prompts → scaffold → Docker build → live admin panel. See <a href="docs/README.md">docs/README.md</a> to regenerate this GIF.</sub>
+  <sub>Full run: prompts → scaffold → generate Docker/deploy/AI files. See <a href="docs/README.md">docs/README.md</a> to regenerate this GIF.</sub>
 </div>
 
 <br />
@@ -61,28 +61,74 @@ wiring up `docker-compose.yml` for Postgres/MySQL/SQLite, generating six differe
 correctly, and figuring out deploy config for whatever platform you're shipping to. Dockphine
 does all of it in one interactive run.
 
-- ⚡ **Fast by design** — scaffolds on the host, defers `npm install` to the Docker build layer,
-  skips anything that isn't needed. A new project is running in Docker in under 2 minutes.
-- 🐳 **Production-ready output, not a toy Dockerfile** — real multi-stage builds, slim runtime
-  images, dev dependencies pruned, native modules (`sharp`, `better-sqlite3`) compiled correctly.
-- 🔐 **Real secrets, generated for you** — `APP_KEYS`, `JWT_SECRET`, `ADMIN_JWT_SECRET`,
-  `API_TOKEN_SALT`, `TRANSFER_TOKEN_SALT`, `ENCRYPTION_KEY`, and database credentials are
-  cryptographically random from the first run. Zero manual `.env` editing to boot.
-  A safe `.env.example` is generated alongside it for your repo — real values never touch git.
-- 🌍 **Deploy anywhere** — generates config for a **generic VPS** (DigitalOcean, Hetzner, AWS,
-  Contabo, or any box you SSH into), **Fly.io**, **Railway**, **Render**, or **Dokploy**.
-  Config-only: nothing is provisioned or deployed without you running the command yourself.
-- 🔁 **Works on existing projects too** — already have a Strapi app? Dockphine detects it and
-  wraps it with Docker without touching your code or regenerating live secrets.
-- 🤖 **AI-agent aware** — optionally generates a project-context file for Claude Code, Cursor,
-  GitHub Copilot, Windsurf, Codex, or Gemini CLI, so your AI pair-programmer understands the
-  Docker setup, the deploy target, and where secrets live before you even ask it to.
-- 📦 **Strapi v4 and v5** — both supported, including automatically falling back to a
-  containerized scaffold step when your local Node.js version doesn't satisfy Strapi's own
-  engine requirements.
-- 🧑‍💻 **Fully interactive, genuinely pleasant CLI** — built on `inquirer`, `chalk`, `ora`, and
-  `cli-progress`, not a wall of flags to memorize.
-- 🆓 **Open source, MIT-licensed** — free forever, [contributions welcome](#contributing).
+<table>
+<tr>
+<td width="50%" valign="top">
+
+⚡ **Fast by design**
+<br />
+Scaffolds on the host, defers `npm install` to the Docker build layer, skips anything that isn't needed. A new project is running in Docker in under 2 minutes.
+
+</td>
+<td width="50%" valign="top">
+
+🐳 **Production-ready output, not a toy Dockerfile**
+<br />
+Real multi-stage builds, slim runtime images, dev dependencies pruned, native modules (`sharp`, `better-sqlite3`) compiled correctly.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+🔐 **Real secrets, generated for you**
+<br />
+`APP_KEYS`, `JWT_SECRET`, `ADMIN_JWT_SECRET`, `API_TOKEN_SALT`, `TRANSFER_TOKEN_SALT`, `ENCRYPTION_KEY`, and database credentials are cryptographically random from the first run. Zero manual `.env` editing to boot. A safe `.env.example` is generated alongside it — real values never touch git.
+
+</td>
+<td valign="top">
+
+🌍 **Deploy anywhere**
+<br />
+Generates config for a generic VPS (DigitalOcean, Hetzner, AWS, Contabo, or any box you SSH into), Fly.io, Railway, Render, or Dokploy. Config-only: nothing is provisioned or deployed without you running the command yourself.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+🔁 **Works on existing projects too**
+<br />
+Already have a Strapi app? Dockphine detects it and wraps it with Docker without touching your code or regenerating live secrets.
+
+</td>
+<td valign="top">
+
+🤖 **AI-agent aware**
+<br />
+Optionally generates a project-context file for Claude Code, Cursor, GitHub Copilot, Windsurf, Codex, or Gemini CLI, so your AI pair-programmer understands the Docker setup, the deploy target, and where secrets live before you even ask it to.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+📦 **Strapi v4 and v5**
+<br />
+Both supported, including automatically falling back to a containerized scaffold step when your local Node.js version doesn't satisfy Strapi's own engine requirements.
+
+</td>
+<td valign="top">
+
+🧑‍💻 **A genuinely pleasant CLI, not a wall of flags**
+<br />
+Built with a custom [Ink](https://github.com/vadimdemedes/ink) terminal UI — a live step checklist, bordered panels, real-time progress — instead of `--flag --after --flag` you have to memorize.
+
+</td>
+</tr>
+</table>
+
+🆓 **Open source, MIT-licensed** — free forever, [contributions welcome](#contributing).
 
 <br />
 
@@ -91,6 +137,16 @@ does all of it in one interactive run.
 ```bash
 npx dockphine
 ```
+
+Or install it once and just call `dockphine` from anywhere, anytime:
+
+```bash
+npm install -g dockphine
+dockphine
+```
+
+(A global install is a pinned snapshot — run `npm update -g dockphine` occasionally to get new
+versions. `npx dockphine` always resolves the latest release automatically, no install needed.)
 
 Answer the prompts — mode, project name, Strapi version, database, port, deploy target, and
 whether to build now — then:
@@ -185,7 +241,7 @@ exact next-step command.
 
 | Agent | File generated |
 |---|---|
-| Claude Code | `CLAUDE.md` |
+| Claude Code | `.claude/skills/dockphine/SKILL.md` |
 | Cursor | `.cursor/rules/dockphine.mdc` |
 | GitHub Copilot | `.github/copilot-instructions.md` |
 | Windsurf | `.windsurfrules` |

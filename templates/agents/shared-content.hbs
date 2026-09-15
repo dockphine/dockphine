@@ -27,6 +27,7 @@ docker compose up --build
 
 Strapi admin panel: http://localhost:{{port}}/admin
 
+{{#if hasDeployTarget}}
 ## Deploy target: {{deployTargetLabel}}
 
 This project was configured for {{deployTargetLabel}}. The generated deploy config is config-only — nothing has been provisioned or deployed automatically. To actually deploy:
@@ -34,6 +35,11 @@ This project was configured for {{deployTargetLabel}}. The generated deploy conf
 {{#each nextSteps}}
 - `{{this}}`
 {{/each}}
+{{else}}
+## Deploy target
+
+None selected — this project only has local Docker files (`Dockerfile`, `docker-compose.yml`). Run `docker compose up --build` locally; add deploy-specific config later if needed.
+{{/if}}
 
 ## Where things live (Strapi orientation)
 

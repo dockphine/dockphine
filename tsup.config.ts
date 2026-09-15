@@ -11,13 +11,13 @@ export default defineConfig({
     js: "#!/usr/bin/env node",
   },
   external: [
-    "chalk",
-    "cli-progress",
+    "@inkjs/ui",
+    "cfonts",
     "commander",
     "execa",
     "fs-extra",
     "handlebars",
-    "inquirer",
-    "ora",
+    "ink",
+    "react",
   ],
 });
