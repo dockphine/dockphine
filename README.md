@@ -11,17 +11,17 @@ One command. Real secrets generated for you. Deploy-ready config for the platfor
 Open source, MIT-licensed, built for developers who ship.
 
 [![version](https://img.shields.io/badge/version-1.0.0-00d3ab.svg)](https://github.com/dockphine/dockphine/releases)
-[![npm version](https://img.shields.io/npm/v/create-dockphine-strapi.svg?color=00d3ab&label=npm)](https://www.npmjs.com/package/create-dockphine-strapi)
-[![npm downloads](https://img.shields.io/npm/dm/create-dockphine-strapi.svg?color=00d3ab)](https://www.npmjs.com/package/create-dockphine-strapi)
+[![npm version](https://img.shields.io/npm/v/dockphine.svg?color=00d3ab&label=npm)](https://www.npmjs.com/package/dockphine)
+[![npm downloads](https://img.shields.io/npm/dm/dockphine.svg?color=00d3ab)](https://www.npmjs.com/package/dockphine)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![node](https://img.shields.io/node/v/create-dockphine-strapi.svg?color=339933&logo=node.js&logoColor=white)](package.json)
+[![node](https://img.shields.io/node/v/dockphine.svg?color=339933&logo=node.js&logoColor=white)](package.json)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![made with docker](https://img.shields.io/badge/made%20with-Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![made with typescript](https://img.shields.io/badge/made%20with-TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![stars](https://img.shields.io/github/stars/dockphine/dockphine?style=social)](https://github.com/dockphine/dockphine)
 
 ```bash
-npx create-dockphine-strapi
+npx dockphine
 ```
 
 </div>
@@ -29,7 +29,7 @@ npx create-dockphine-strapi
 <br />
 
 <div align="center">
-  <img src="docs/demo.gif" alt="create-dockphine-strapi terminal demo — scaffolding, Dockerizing, and booting a Strapi project in under 2 minutes" width="820" />
+  <img src="https://raw.githubusercontent.com/dockphine/dockphine/main/docs/demo.gif" alt="dockphine terminal demo — scaffolding, Dockerizing, and booting a Strapi project in under 2 minutes" width="820" />
   <br />
   <sub>Full run: prompts → scaffold → Docker build → live admin panel. See <a href="docs/README.md">docs/README.md</a> to regenerate this GIF.</sub>
 </div>
@@ -89,13 +89,7 @@ does all of it in one interactive run.
 ## Quick start
 
 ```bash
-npx create-dockphine-strapi
-```
-
-or, using npm's `create` shorthand:
-
-```bash
-npm create dockphine-strapi
+npx dockphine
 ```
 
 Answer the prompts — mode, project name, Strapi version, database, port, deploy target, and
@@ -116,7 +110,7 @@ with the Compose plugin to run what it generates.
 ## How it works
 
 <div align="center">
-  <img src="docs/architecture.svg" alt="Dockphine flow: npx create-dockphine-strapi, choose new or existing project, choose database, choose deploy target, generate Docker and env files, then build now or print next steps" width="640" />
+  <img src="https://raw.githubusercontent.com/dockphine/dockphine/main/docs/architecture.svg" alt="Dockphine flow: npx dockphine, choose new or existing project, choose database, choose deploy target, generate Docker and env files, then build now or print next steps" width="640" />
 </div>
 
 <br />
@@ -203,7 +197,7 @@ exact next-step command.
 
 ## Dockphine vs. doing it by hand
 
-| | By hand | `create-dockphine-strapi` |
+| | By hand | `dockphine` |
 |---|---|---|
 | Multi-stage `Dockerfile` | Write and debug it yourself | Generated, production-shaped |
 | Database service + healthchecks | Copy-paste from a blog post, hope it's current | Generated per engine, healthchecked |
@@ -228,7 +222,7 @@ exact next-step command.
 ## FAQ
 
 **How do I Dockerize an existing Strapi project?**
-Run `npx create-dockphine-strapi` from inside your existing project's root directory and choose
+Run `npx dockphine` from inside your existing project's root directory and choose
 "Dockerize an existing Strapi project" — it detects `@strapi/strapi` in your `package.json`
 automatically.
 
@@ -238,7 +232,7 @@ No. Every deploy target generates config-only output — `docker-compose.yml`, `
 yourself, on your own schedule, with your own credentials.
 
 **What's the fastest way to run Strapi in Docker?**
-`npx create-dockphine-strapi`, answer the prompts, then `docker compose up --build`. That's the
+`npx dockphine`, answer the prompts, then `docker compose up --build`. That's the
 whole workflow — see [Quick start](#quick-start).
 
 **Does it work with Strapi v4 or only v5?**

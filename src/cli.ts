@@ -24,14 +24,14 @@ function isCancelError(err: unknown): boolean {
 export async function run(): Promise<void> {
   const program = new Command();
   program
-    .name("create-dockphine-strapi")
+    .name("dockphine")
     .description("Scaffold a Dockerized Strapi project (or Dockerize an existing one) in under 2 minutes.")
     .version(CLI_VERSION)
     .parse(process.argv);
 
   const cwd = process.cwd();
 
-  logger.title("create-dockphine-strapi");
+  logger.title("dockphine");
   logger.info("Dockerize Strapi in under 2 minutes.\n");
 
   try {

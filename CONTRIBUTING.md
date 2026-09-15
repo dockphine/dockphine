@@ -13,7 +13,7 @@ npm run build
 npm link
 ```
 
-`npm link` makes `create-dockphine-strapi` resolve to your local build globally, so you can run
+`npm link` makes `dockphine` resolve to your local build globally, so you can run
 it exactly as an end user would while iterating.
 
 ```bash

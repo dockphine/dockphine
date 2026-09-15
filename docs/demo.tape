@@ -18,7 +18,7 @@ Set Height 700
 Set Padding 20
 Set TypingSpeed 60ms
 
-Type "npx create-dockphine-strapi"
+Type "npx dockphine"
 Sleep 500ms
 Enter
 Sleep 2s

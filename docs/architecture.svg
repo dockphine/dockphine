@@ -35,7 +35,7 @@
 
   <!-- 1: start -->
   <rect x="295" y="15" width="230" height="42" rx="8" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>
-  <text x="410" y="41" font-size="13" fill="#e6edf3" text-anchor="middle">npx create-dockphine-strapi</text>
+  <text x="410" y="41" font-size="13" fill="#e6edf3" text-anchor="middle">npx dockphine</text>
 
   <!-- 2: diamond -->
   <polygon points="410,75 550,150 410,225 270,150" fill="#161b22" stroke="#3d6a85" stroke-width="1.5"/>

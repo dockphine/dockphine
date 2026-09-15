@@ -1,5 +1,5 @@
 {
-  "name": "create-dockphine-strapi",
+  "name": "dockphine",
   "version": "1.0.0",
   "description": "Scaffold a production-ready, Dockerized Strapi project (or Dockerize an existing one) in under 2 minutes. Auto-generated secrets, deploy config for VPS/Fly.io/Railway/Render/Dokploy, and AI-agent-aware.",
   "type": "module",
@@ -40,7 +40,7 @@
     "url": "git+https://github.com/dockphine/dockphine.git"
   },
   "bin": {
-    "create-dockphine-strapi": "./dist/index.js"
+    "dockphine": "./dist/index.js"
   },
   "files": [
     "dist"
